@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package anvlib.Data.Database;
 
 import java.sql.CallableStatement;
@@ -36,6 +31,7 @@ public abstract class BaseDbManager
     protected String _connectionString;//--строка соединения
     protected String _connectionStringTemplate = "jdbc:%s://%s:%d/%s";
     protected String _DBDriver = "nulldriver";
+    protected int _defaultPort = 0;
     protected String _owner;//--владелец объекта
     protected char _open_bracket;//--для избежания проблем с системными полями
     protected char _close_bracket;//--для избежания проблем с системными полями
@@ -99,8 +95,7 @@ public abstract class BaseDbManager
             _connectionString = GetFullConnectionString(Server, Login, Password, Database);
             _connected = true;
             try
-            {
-                //_conn = DriverManager.getConnection(_connectionString, Login, Password);
+            {                
                 _conn = DriverManager.getConnection(_connectionString);
             } catch (SQLException e)
             {
@@ -109,21 +104,20 @@ public abstract class BaseDbManager
         }
     }
     
-    protected String GetShortConnectionString(String Server, String Database)
+    /*protected String GetShortConnectionString(String Server, String Database)
     {
         String res;
 
-        res = String.format(_connectionStringTemplate, _DBDriver, Server, Database);
+        res = String.format(_connectionStringTemplate, _DBDriver, Server, _defaultPort, Database);
 
         return res;
-    }
+    }*/
     
     protected String GetFullConnectionString(String Server, String Login, String Password, String Database)
     {
         String res;
-
-        res = String.format(_connectionStringTemplate, _DBDriver, Server, Login, Password, Database);
-
+        res = String.format(_connectionStringTemplate, _DBDriver, Server, _defaultPort, Login, Password, Database);
+        
         return res;
     }
     
@@ -221,5 +215,10 @@ public abstract class BaseDbManager
         }
 
         return _cstmt;
+    }
+    
+    public void ChangeDefaultServerPort(int Port)
+    {
+        _defaultPort = Port;
     }
 }
