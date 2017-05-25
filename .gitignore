@@ -45,3 +45,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+/anvlib_core/nbproject/private/
+/anvlib_core/build/
+/anvlib_core/dist/

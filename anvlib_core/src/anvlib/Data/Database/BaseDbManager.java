@@ -46,9 +46,7 @@ public abstract class BaseDbManager
     {
     }
     
-    // Состоянние "Соединения с сервером"        
-    //public boolean Connected;
-
+    // Состоянние "Соединения с сервером"                
     public boolean Connected()
     {
         try
@@ -59,6 +57,7 @@ public abstract class BaseDbManager
             }
         } catch (SQLException e)
         {
+            _last_error = e.getErrorCode();
             return false;
         }
         return false;
@@ -82,7 +81,9 @@ public abstract class BaseDbManager
                 _conn = DriverManager.getConnection(_connectionString);
             } catch (SQLException e)
             {
+                _last_error = e.getErrorCode();
                 System.err.println(e.getMessage());
+                //--В будущем надо сделать Принтинг мессадж как сделано в основной либе
             }
         }
     }
@@ -99,6 +100,7 @@ public abstract class BaseDbManager
                 _conn = DriverManager.getConnection(_connectionString);
             } catch (SQLException e)
             {
+                _last_error = e.getErrorCode();
                 System.err.println(e.getMessage());
             }
         }
@@ -134,6 +136,7 @@ public abstract class BaseDbManager
                 _conn.close();
             } catch (SQLException e)
             {
+                _last_error = e.getErrorCode();
                 System.err.println(e.getMessage());
             }
         }
@@ -160,6 +163,7 @@ public abstract class BaseDbManager
             _stmt.execute(CmdText);                    
         } catch (SQLException e)
         {
+            _last_error = e.getErrorCode();
             System.err.println(e.getMessage());
         }
         
@@ -174,6 +178,7 @@ public abstract class BaseDbManager
             _rs = _stmt.executeQuery(CmdText);                    
         } catch (SQLException e)
         {
+            _last_error = e.getErrorCode();
             System.err.println(e.getMessage());
         }
         
@@ -190,6 +195,7 @@ public abstract class BaseDbManager
             res = _stmt.executeUpdate(CmdText);
         } catch (SQLException e)
         {
+            _last_error = e.getErrorCode();
             System.err.println(e.getMessage());
         }
 
@@ -211,6 +217,7 @@ public abstract class BaseDbManager
             _cstmt = _conn.prepareCall(String.format(preparedCall, ProcedureName, pars));
         } catch (SQLException e)
         {
+            _last_error = e.getErrorCode();
             System.err.println(e.getMessage());
         }
 
