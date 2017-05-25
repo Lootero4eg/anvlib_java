@@ -26,7 +26,8 @@ public class BaseOracleManager extends BaseDbManager
                 _conn = DriverManager.getConnection(_connectionString);
             } catch (SQLException e)
             {
-                System.err.println(e.getMessage());
+                if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
             }
         }
     }
