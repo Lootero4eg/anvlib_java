@@ -6,23 +6,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import anvlib.Interfaces.IPrintMessageSystem;
 
 /* Этот класс нужен только для других базовых классов
 так что используй базовые классы 
 типа BaseMSSQLManager и BaseOracleManager*/
-public abstract class BaseDbManager
+public /*abstract*/ class BaseDbManager
 {
     protected Connection _conn;
     protected Statement _stmt;
     protected CallableStatement _cstmt;
     protected ResultSet _rs;  
     protected boolean _connected = false; 
-    /*protected DbParameter _param;
-        protected DbDataAdapter _DA;
-        protected DbDataReader _DR;        
-        protected DataTable _dt;
-        protected DataRow _row;
-        protected DataColumn _column;
+    /*protected DbParameter _param;                        
         protected DbTransaction _transaction;*/
     protected String _systables_prefix; //--префикс системных таблиц
     protected String _parameters_prefix;//--префикс для параметров, в MySQL и MSSQL отличаются, возможно в оракле тоже
@@ -39,11 +35,12 @@ public abstract class BaseDbManager
     protected int _last_error = 0;
 
     //--Может использоваться не только для ошибок! Но и когда надо напечатать какое-то сообщение из методов менеджера
-    /*protected IPrintMessageSystem MessagePrinter;
-        protected ErrorMessageManager ErrorsManager = new ErrorMessageManager();*/
+    protected IPrintMessageSystem MessagePrinter;
+    //    protected ErrorMessageManager ErrorsManager = new ErrorMessageManager();
     //--Конструктор
     public BaseDbManager()
     {
+        MessagePrinter = new anvlib.Classes.PrintMessageSystems.ConsolePrintMessageSystem();
     }
     
     // Состоянние "Соединения с сервером"                
@@ -82,8 +79,8 @@ public abstract class BaseDbManager
             } catch (SQLException e)
             {
                 _last_error = e.getErrorCode();
-                System.err.println(e.getMessage());
-                //--В будущем надо сделать Принтинг мессадж как сделано в основной либе
+                if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);                
             }
         }
     }
@@ -101,19 +98,11 @@ public abstract class BaseDbManager
             } catch (SQLException e)
             {
                 _last_error = e.getErrorCode();
-                System.err.println(e.getMessage());
+                if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
             }
         }
     }
-    
-    /*protected String GetShortConnectionString(String Server, String Database)
-    {
-        String res;
-
-        res = String.format(_connectionStringTemplate, _DBDriver, Server, _defaultPort, Database);
-
-        return res;
-    }*/
     
     protected String GetFullConnectionString(String Server, String Login, String Password, String Database)
     {
@@ -122,10 +111,7 @@ public abstract class BaseDbManager
         
         return res;
     }
-    
-    // Код ошибки выполнения запроса. Если значнеие 0 - значит ошибки нет.    
-    public int LastError;
-    
+            
     // Разъединить соединение с сервером
     public void Disconnect()
     {
@@ -137,7 +123,8 @@ public abstract class BaseDbManager
             } catch (SQLException e)
             {
                 _last_error = e.getErrorCode();
-                System.err.println(e.getMessage());
+                if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
             }
         }
     }
@@ -164,7 +151,8 @@ public abstract class BaseDbManager
         } catch (SQLException e)
         {
             _last_error = e.getErrorCode();
-            System.err.println(e.getMessage());
+            if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
         }
         
         return _stmt;
@@ -179,7 +167,8 @@ public abstract class BaseDbManager
         } catch (SQLException e)
         {
             _last_error = e.getErrorCode();
-            System.err.println(e.getMessage());
+            if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
         }
         
         return _rs;
@@ -196,7 +185,8 @@ public abstract class BaseDbManager
         } catch (SQLException e)
         {
             _last_error = e.getErrorCode();
-            System.err.println(e.getMessage());
+            if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
         }
 
         return res;
@@ -218,7 +208,8 @@ public abstract class BaseDbManager
         } catch (SQLException e)
         {
             _last_error = e.getErrorCode();
-            System.err.println(e.getMessage());
+            if (MessagePrinter != null)
+                    MessagePrinter.PrintMessage(e.getMessage(), "Error", 1, 1);
         }
 
         return _cstmt;
